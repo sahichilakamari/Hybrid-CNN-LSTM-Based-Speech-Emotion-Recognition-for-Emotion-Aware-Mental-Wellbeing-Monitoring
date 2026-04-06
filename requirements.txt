@@ -1,0 +1,46 @@
+# =========================
+# Core ML / DL
+# =========================
+tensorflow
+numpy
+scipy
+
+# =========================
+# Audio Processing
+# =========================
+librosa
+soundfile
+
+# =========================
+# Data Processing
+# =========================
+scikit-learn
+pandas
+
+# =========================
+# Visualization (optional)
+# =========================
+matplotlib
+seaborn
+
+# =========================
+# Backend (choose one)
+# =========================
+fastapi
+uvicorn
+
+# If using Flask instead of FastAPI, uncomment:
+# flask==3.0.2
+# flask-cors==4.0.0
+# gunicorn==21.2.0
+
+# =========================
+# Frontend (Streamlit - optional)
+# =========================
+streamlit
+
+# =========================
+# Utilities
+# =========================
+tqdm
+joblib
