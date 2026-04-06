@@ -1,0 +1,36 @@
+{
+  "best_model": "SVM (RBF)",
+  "feature_count": 220,
+  "accuracy": 0.9154013015184381,
+  "cv_accuracy": 0.8324955201358106,
+  "num_samples": 2304,
+  "class_distribution": [
+    384,
+    384,
+    384,
+    384,
+    384,
+    384
+  ],
+  "emotion_labels": [
+    "neutral/calm",
+    "happy",
+    "sad",
+    "angry",
+    "fearful/disgust",
+    "surprised"
+  ],
+  "feature_vector_length": 220,
+  "all_model_accuracies": {
+    "Random Forest": 0.8308026030368764,
+    "SVM (RBF)": 0.9154013015184381,
+    "SVM (Linear)": 0.8091106290672451,
+    "Gradient Boosting": 0.8112798264642083,
+    "XGBoost": 0.8156182212581344,
+    "MLP Neural Network": 0.8655097613882863,
+    "K-Nearest Neighbors": 0.7960954446854663,
+    "Logistic Regression": 0.7939262472885033,
+    "Decision Tree": 0.5813449023861171,
+    "AdaBoost": 0.4685466377440347
+  }
+}
