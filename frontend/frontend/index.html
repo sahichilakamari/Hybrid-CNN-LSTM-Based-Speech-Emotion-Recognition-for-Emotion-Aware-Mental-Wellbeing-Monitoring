@@ -1,1 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SER-Mind | AI-Powered Speech Emotion Recognition & Mental Health Monitoring</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #7209b7;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        nav a.active, nav a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-size: 1.4rem;
+        }
+
+        .card h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            grid-column: span 1;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #3aa8d0;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d11467;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e07c0c;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #5d0894;
+        }
+
+        .file-upload {
+            margin-top: 15px;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            background: #f9f9f9;
+            transition: var(--transition);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #f0f8ff;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .file-upload label:hover {
+            background: var(--secondary);
+        }
+
+        /* Emotion Analysis */
+        .emotion-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .emotion-label {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .confidence-meter {
+            width: 100%;
+            background: #eee;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            width: 0%;
+            transition: width 1s ease;
+            border-radius: 10px;
+        }
+
+        .confidence-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Real-time Analytics */
+        .analytics-section {
+            grid-column: span 1;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .emotion-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .emotion-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emotion-name {
+            min-width: 80px;
+            font-weight: 600;
+        }
+
+        .bar-container {
+            flex-grow: 1;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* Pie Chart Section */
+        .pie-section {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1024px) {
+            .pie-section {
+                grid-column: span 1;
+            }
+        }
+
+        .pie-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pie-chart {
+            width: 300px;
+            height: 300px;
+        }
+
+        .pie-legend {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        /* Mood Journal */
+        .mood-journal {
+            grid-column: span 1;
+        }
+
+        .mood-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mood-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .mood-option:hover {
+            background: #f0f0f0;
+        }
+
+        .mood-option.selected {
+            border-color: var(--primary);
+            background: #e8f0ff;
+        }
+
+        .mood-option i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .mood-entries {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .mood-entry {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .entry-emotion {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .entry-time {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Wellness Activities */
+        .wellness-section {
+            grid-column: span 1;
+        }
+
+        .activity-card {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-icon {
+            font-size: 2rem;
+            color: var(--success);
+            margin-right: 15px;
+        }
+
+        /* Mental Health Monitor */
+        .health-monitor {
+            grid-column: span 1;
+        }
+
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stress { color: var(--danger); }
+        .stable { color: var(--success); }
+        .anxiety { color: var(--warning); }
+        .wellness { color: var(--primary); }
+
+        .insights {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .trends-section {
+            grid-column: span 1;
+        }
+
+        /* Footer */
+        .session-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            nav {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mood-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .health-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <div>
+                    <h1>SER-Mind</h1>
+                    <p>AI-Powered Speech Emotion Recognition & Mental Health Monitoring</p>
+                </div>
+            </div>
+            <nav>
+                <a href="#" class="active" onclick="showSection('emotion-analysis')">Emotion Analysis</a>
+                <a href="#" onclick="showSection('mental-health')">Mental Health</a>
+                <a href="#" onclick="showSection('mood-journal')">Mood Journal</a>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Emotion Analysis Section (Default) -->
+            <section id="emotion-analysis" class="content-section">
+                <div class="main-content">
+                    <!-- Left Column -->
+                    <div class="card upload-section">
+                        <h2><i class="fas fa-upload"></i> Upload Audio File</h2>
+                        
+                        <div class="file-upload">
+                            <h3>Select Audio File for Analysis</h3>
+                            <p>Supported formats: WAV, MP3, M4A</p>
+                            <input type="file" id="audioUpload" accept="audio/*,.wav,.mp3,.m4a">
+                            <label for="audioUpload">
+                                <i class="fas fa-upload"></i> Choose Audio File
+                            </label>
+                            <p id="fileName" style="margin-top: 15px; font-style: italic;"></p>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" id="analyzeButton" disabled>
+                                <i class="fas fa-play"></i> Analyze Audio
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px;">
+                            <h3><i class="fas fa-info-circle"></i> How to use:</h3>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>Click "Choose Audio File" to select an audio file</li>
+                                <li>Click "Analyze Audio" to process the file</li>
+                                <li>View the emotion analysis results</li>
+                                <li>Check session history for past analyses</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="card">
+                        <h2>Emotion Analysis</h2>
+                        <div class="emotion-display">
+                            <div class="emotion-label" id="emotionLabel">Neutral</div>
+                            <div class="confidence-meter">
+                                <div class="confidence-fill" id="confidenceFill"></div>
+                            </div>
+                            <div class="confidence-text" id="confidenceText">Confidence: 0%</div>
+                        </div>
+                        
+                        <div id="analysisDetails" style="margin-top: 20px; display: none;">
+                            <h3>Analysis Details</h3>
+                            <div id="detailsContent" style="padding: 15px; background: #f9f9f9; border-radius: 8px;">
+                                <!-- Details will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 30px;">Advanced Features</h3>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-info" id="detailedAnalysis">
+                                <i class="fas fa-chart-bar"></i> Detailed Analysis
+                            </button>
+                            <button class="btn btn-info" id="getRecommendations">
+                                <i class="fas fa-heartbeat"></i> Get Recommendations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div class="main-content">
+                    <div class="card analytics-section">
+                        <h2>Real-Time Analytics</h2>
+                        <h3>Emotion Confidence</h3>
+                        <div class="chart-container">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div class="emotion-bars" id="emotionBars">
+                            <!-- Dynamic bars will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="card analytics-section">
+                        <h2>Session History</h2>
+                        <div id="sessionHistory" style="min-height: 300px;">
+                            <p class="no-data">No session data yet. Upload audio to analyze.</p>
+                        </div>
+                        <div class="session-controls">
+                            <button class="btn btn-info" id="exportData">
+                                <i class="fas fa-download"></i> Export Session Data
+                            </button>
+                            <button class="btn btn-danger" id="clearHistory">
+                                <i class="fas fa-trash"></i> Clear History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pie Chart Section -->
+                <div class="card pie-section">
+                    <h2>Emotion Distribution</h2>
+                    <div class="pie-container">
+                        <div class="pie-chart">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                        <div class="pie-legend" id="pieLegend">
+                            <!-- Legend will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mental Health Section -->
+            <section id="mental-health" class="content-section" style="display: none;">
+                <div class="main-content">
+                    <div class="card health-monitor">
+                        <h2><i class="fas fa-brain"></i> Mental Health Monitor</h2>
+                        <div class="health-metrics">
+                            <div class="metric-card">
+                                <h3>Stress Level</h3>
+                                <div class="metric-value stress" id="stressLevel">Low</div>
+                                <div class="metric-bar">
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: 30%; background-color: var(--success);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Mood Stability</h3>
+                                <div class="metric-value stable" id="moodStability">Stable</div>
+                                <div class="metric-bar">
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: 75%; background-color: var(--success);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Anxiety Indicator</h3>
+                                <div class="metric-value anxiety" id="anxietyIndicator">Low</div>
+                                <div class="metric-bar">
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: 25%; background-color: var(--warning);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Wellness Score</h3>
+                                <div class="metric-value wellness" id="wellnessScore">85%</div>
+                                <div class="metric-bar">
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: 85%; background-color: var(--primary);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="insights">
+                            <h3><i class="fas fa-search"></i> Mental Health Insights</h3>
+                            <p id="healthInsights">Good emotional balance maintained</p>
+                        </div>
+
+                        <div class="insights">
+                            <h3><i class="fas fa-heart"></i> Wellness Recommendations</h3>
+                            <p id="wellnessRecommendations">Stay hydrated and eat balanced meals</p>
+                        </div>
+                    </div>
+
+                    <div class="card trends-section">
+                        <h2><i class="fas fa-chart-line"></i> Mental Health Trends</h2>
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                        <div class="legend">
+                            <p><span style="color: var(--primary);">●</span> Wellbeing Score</p>
+                            <p><span style="color: var(--danger);">●</span> Stress Level</p>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-primary" id="updateTrends">
+                                <i class="fas fa-sync-alt"></i> Update Trends
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mood Journal Section -->
+            <section id="mood-journal" class="content-section" style="display: none;">
+                <div class="main-content">
+                    <div class="card mood-journal">
+                        <h2><i class="fas fa-book"></i> Daily Mood Journal</h2>
+                        
+                        <h3>How are you feeling right now?</h3>
+                        <div class="mood-options" id="moodOptions">
+                            <div class="mood-option" data-mood="excited">
+                                <i class="fas fa-grin-stars"></i> Excited
+                            </div>
+                            <div class="mood-option" data-mood="happy">
+                                <i class="fas fa-smile"></i> Happy
+                            </div>
+                            <div class="mood-option" data-mood="neutral">
+                                <i class="fas fa-meh"></i> Neutral
+                            </div>
+                            <div class="mood-option" data-mood="sad">
+                                <i class="fas fa-frown"></i> Sad
+                            </div>
+                            <div class="mood-option" data-mood="anxious">
+                                <i class="fas fa-flushed"></i> Anxious
+                            </div>
+                            <div class="mood-option" data-mood="angry">
+                                <i class="fas fa-angry"></i> Angry
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 20px;">How are you feeling today? Any specific thoughts or events affecting your mood?</h3>
+                        <textarea id="moodNotes" placeholder="Write your thoughts here..."></textarea>
+                        
+                        <button class="btn btn-success" id="saveMood" style="width: 100%;">
+                            <i class="fas fa-save"></i> Save Mood Entry
+                        </button>
+
+                        <h3 style="margin-top: 30px;">Recent Mood Entries</h3>
+                        <div class="mood-entries" id="moodEntries">
+                            <!-- Mood entries will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="card wellness-section">
+                        <h2><i class="fas fa-spa"></i> Wellness Activities</h2>
+                        <div id="wellnessActivities">
+                            <!-- Activities will be added here -->
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-primary" id="newSuggestion">
+                                <i class="fas fa-plus"></i> New Suggestion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>SER-Mind &copy; 2025 | AI-Powered Speech Emotion Recognition for Mental Health Monitoring</p>
+            <p>Backend Status: <span id="backendStatus">Connecting...</span></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Backend URL - Change this if your backend is running on a different port
+        const BACKEND_URL = 'http://localhost:5000';
+
+        
+        
+        // Global variables
+        let currentEmotion = 'neutral';
+        let currentConfidence = 0;
+        let sessionHistory = [];
+        let moodEntries = [];
+        let emotionColors = {
+            'neutral': '#6c757d',
+            'happy': '#ffc107',
+            'sad': '#0d6efd',
+            'angry': '#dc3545',
+            'fearful': '#6f42c1'
+        };
+        
+        // Emotion labels mapping (5 emotions)
+        const EMOTION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'fearful'];
+        const EMOTION_DISPLAY_NAMES = {
+            'neutral': 'Neutral',
+            'happy': 'Happy',
+            'sad': 'Sad',
+            'angry': 'Angry',
+            'fearful': 'Fearful'
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            initEventListeners();
+            loadSessionData();
+            checkBackendStatus();
+            
+            // Add some sample mood entries
+            addSampleMoodEntries();
+            addSampleWellnessActivities();
+            
+            // Test backend connection
+            testBackendConnection();
+        });
+
+        // Check backend status
+        async function checkBackendStatus() {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/health`);
+                document.getElementById('backendStatus').innerHTML = 
+                    `<span style="color: green;">Connected ✓ (${response.data.num_emotions} emotions)</span>`;
+                console.log('Backend connected successfully:', response.data);
+            } catch (error) {
+                document.getElementById('backendStatus').innerHTML = 
+                    `<span style="color: red;">Not Connected ✗ - Make sure backend is running on ${BACKEND_URL}</span>`;
+                console.error('Backend connection failed:', error);
+                console.log('Using mock data for demo');
+            }
+        }
+
+        // Test backend connection
+        async function testBackendConnection() {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/health`);
+                if (response.data && response.data.status === "healthy") {
+                    console.log('Backend API working correctly:', response.data);
+                    return true;
+                }
+            } catch (error) {
+                console.warn('Backend not responding, using mock data');
+                return false;
+            }
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Bar chart for emotion confidence
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            window.barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful'],
+                    datasets: [{
+                        label: 'Confidence',
+                        data: [0.1, 0.1, 0.1, 0.1, 0.1],
+                        backgroundColor: [
+                            emotionColors.neutral,
+                            emotionColors.happy,
+                            emotionColors.sad,
+                            emotionColors.angry,
+                            emotionColors.fearful
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            ticks: {
+                                callback: function(value) {
+                                    return (value * 100).toFixed(0) + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Pie chart for emotion distribution
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            window.pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful'],
+                    datasets: [{
+                        data: [0.2, 0.2, 0.2, 0.2, 0.2],
+                        backgroundColor: [
+                            emotionColors.neutral,
+                            emotionColors.happy,
+                            emotionColors.sad,
+                            emotionColors.angry,
+                            emotionColors.fearful
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Update pie chart legend
+            updatePieLegend();
+
+            // Trend chart for mental health
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            window.trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [
+                        {
+                            label: 'Wellbeing Score',
+                            data: [75, 78, 82, 80, 85, 88],
+                            borderColor: emotionColors.sad,
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Stress Level',
+                            data: [40, 35, 30, 32, 28, 25],
+                            borderColor: emotionColors.angry,
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update pie chart legend
+        function updatePieLegend() {
+            const legend = document.getElementById('pieLegend');
+            const data = window.pieChart.data;
+            let html = '';
+            
+            data.labels.forEach((label, index) => {
+                const value = (data.datasets[0].data[index] * 100).toFixed(0);
+                html += `
+                    <div class="legend-item">
+                        <div style="display: flex; align-items: center;">
+                            <div class="legend-color" style="background-color: ${data.datasets[0].backgroundColor[index]}"></div>
+                            <span>${label}</span>
+                        </div>
+                        <span style="font-weight: bold;">${value}%</span>
+                    </div>
+                `;
+            });
+            
+            legend.innerHTML = html;
+        }
+
+        // Initialize event listeners
+        function initEventListeners() {
+            // File upload
+            document.getElementById('audioUpload').addEventListener('change', handleFileUpload);
+            
+            // Analyze button
+            document.getElementById('analyzeButton').addEventListener('click', analyzeUploadedAudio);
+            
+            // Buttons
+            document.getElementById('detailedAnalysis').addEventListener('click', showDetailedAnalysis);
+            document.getElementById('getRecommendations').addEventListener('click', getRecommendations);
+            document.getElementById('exportData').addEventListener('click', exportSessionData);
+            document.getElementById('clearHistory').addEventListener('click', clearHistory);
+            
+            // Mood journal
+            document.querySelectorAll('.mood-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            document.getElementById('saveMood').addEventListener('click', saveMoodEntry);
+            document.getElementById('newSuggestion').addEventListener('click', generateNewSuggestion);
+            document.getElementById('updateTrends').addEventListener('click', updateTrends);
+            
+            // Navigation
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Navigation functions
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // File upload handling
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                document.getElementById('analyzeButton').disabled = false;
+            } else {
+                document.getElementById('fileName').textContent = '';
+                document.getElementById('analyzeButton').disabled = true;
+            }
+        }
+
+        // Analyze uploaded audio
+        async function analyzeUploadedAudio() {
+            const fileInput = document.getElementById('audioUpload');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select an audio file first.');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Show loading state
+            document.getElementById('emotionLabel').textContent = 'Analyzing...';
+            document.getElementById('confidenceText').textContent = 'Processing audio...';
+            document.getElementById('confidenceFill').style.width = '0%';
+            document.getElementById('analyzeButton').disabled = true;
+            document.getElementById('analyzeButton').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            
+            try {
+                // Create FormData
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                // Send to backend
+                const response = await axios.post(`${BACKEND_URL}/predict`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                
+                // Process response
+                if (response.data) {
+                    updateEmotionDisplay(response.data);
+                    updateSessionHistory(response.data, 'upload');
+                    updateCharts(response.data);
+                    updateAnalysisDetails(response.data);
+                }
+                
+                // Reset button
+                document.getElementById('analyzeButton').innerHTML = '<i class="fas fa-play"></i> Analyze Audio';
+                document.getElementById('analyzeButton').disabled = false;
+                
+            } catch (error) {
+                console.error('Error analyzing audio:', error);
+                
+                const mockData = generateMockResponse();
+                updateEmotionDisplay(mockData);
+                updateSessionHistory(mockData, 'upload');
+                updateCharts(mockData);
+                updateAnalysisDetails(mockData);
+                
+                // Reset button
+                document.getElementById('analyzeButton').innerHTML = '<i class="fas fa-play"></i> Analyze Audio';
+                document.getElementById('analyzeButton').disabled = false;
+                
+            }
+        }
+
+        // Generate mock response for demo
+        function generateMockResponse() {
+            const emotions = EMOTION_LABELS;
+            const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+            const confidence = (Math.random() * 0.5 + 0.5).toFixed(2); // Between 0.5 and 1.0
+            
+            return {
+                emotion_id: emotions.indexOf(randomEmotion),
+                emotion_label: randomEmotion,
+                confidence: parseFloat(confidence),
+                color: emotionColors[randomEmotion] || '#6c757d'
+            };
+        }
+
+        // Update emotion display
+        function updateEmotionDisplay(data) {
+            const emotion = data.emotion_label || 'neutral';
+            const confidence = data.confidence || 0;
+            const displayName = EMOTION_DISPLAY_NAMES[emotion] || emotion.charAt(0).toUpperCase() + emotion.slice(1);
+            
+            // Update main display
+            document.getElementById('emotionLabel').textContent = displayName;
+            document.getElementById('confidenceFill').style.width = `${confidence * 100}%`;
+            document.getElementById('confidenceText').textContent = 
+                `Confidence: ${(confidence * 100).toFixed(1)}%`;
+            
+            // Update color based on emotion
+            const fill = document.getElementById('confidenceFill');
+            const color = data.color || emotionColors[emotion] || '#6c757d';
+            fill.style.background = `linear-gradient(90deg, ${color}, ${color})`;
+            
+            currentEmotion = emotion;
+            currentConfidence = confidence;
+        }
+
+        // Update analysis details
+        function updateAnalysisDetails(data) {
+            const detailsDiv = document.getElementById('analysisDetails');
+            const contentDiv = document.getElementById('detailsContent');
+            
+            let html = `
+                <p><strong>Detected Emotion:</strong> ${EMOTION_DISPLAY_NAMES[data.emotion_label] || data.emotion_label}</p>
+                <p><strong>Confidence Score:</strong> ${(data.confidence * 100).toFixed(1)}%</p>
+            `;
+            
+            if (data.recommendation) {
+                html += `<p><strong>Recommendation:</strong> ${data.recommendation}</p>`;
+            }
+            
+            if (data.fallback_info) {
+                html += `<p><em>${data.fallback_info}</em></p>`;
+            }
+            
+            contentDiv.innerHTML = html;
+            detailsDiv.style.display = 'block';
+        }
+
+        // Update charts with new data
+        function updateCharts(data) {
+            const emotion = data.emotion_label || 'neutral';
+            const confidence = data.confidence || 0;
+            const emotionIndex = EMOTION_LABELS.indexOf(emotion);
+            
+            // Update bar chart
+            if (window.barChart && emotionIndex >= 0) {
+                // Reset all bars to low values
+                const newData = window.barChart.data.datasets[0].data.map(() => 0.1);
+                // Set the current emotion to high confidence
+                newData[emotionIndex] = confidence;
+                window.barChart.data.datasets[0].data = newData;
+                window.barChart.update();
+            }
+            
+            // Update pie chart (add to the emotion count)
+            if (window.pieChart) {
+                const pieIndex = window.pieChart.data.labels.map(l => l.toLowerCase()).indexOf(emotion);
+                if (pieIndex >= 0) {
+                    // Increment this emotion's value
+                    window.pieChart.data.datasets[0].data[pieIndex] += 0.1;
+                    // Normalize the data
+                    const sum = window.pieChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    window.pieChart.data.datasets[0].data = window.pieChart.data.datasets[0].data.map(val => val / sum);
+                    window.pieChart.update();
+                    updatePieLegend();
+                }
+            }
+            
+            // Update emotion bars display
+            updateEmotionBarsDisplay();
+        }
+
+        // Update emotion bars display
+        function updateEmotionBarsDisplay() {
+            const barsContainer = document.getElementById('emotionBars');
+            const emotions = EMOTION_LABELS;
+            const currentData = window.barChart.data.datasets[0].data;
+            
+            let html = '';
+            emotions.forEach((emotion, index) => {
+                const value = currentData[index] || 0;
+                const percentage = (value * 100).toFixed(1);
+                const displayName = EMOTION_DISPLAY_NAMES[emotion] || emotion.charAt(0).toUpperCase() + emotion.slice(1);
+                
+                html += `
+                    <div class="emotion-bar">
+                        <div class="emotion-name">${displayName}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${percentage}%; background-color: ${emotionColors[emotion]}"></div>
+                        </div>
+                        <div class="emotion-value">${percentage}%</div>
+                    </div>
+                `;
+            });
+            
+            barsContainer.innerHTML = html;
+        }
+
+        // Update session history
+        function updateSessionHistory(data, source) {
+            const entry = {
+                timestamp: new Date().toLocaleString(),
+                emotion: data.emotion_label || 'neutral',
+                confidence: data.confidence || 0,
+                source: source,
+                recommendations: data.suggestions || [],
+                filename: document.getElementById('audioUpload').files[0]?.name || 'Unknown'
+            };
+            
+            sessionHistory.unshift(entry);
+            
+            // Keep only last 10 entries
+            if (sessionHistory.length > 10) {
+                sessionHistory = sessionHistory.slice(0, 10);
+            }
+            
+            updateSessionHistoryDisplay();
+            saveSessionData();
+        }
+
+        // Update session history display
+        function updateSessionHistoryDisplay() {
+            const container = document.getElementById('sessionHistory');
+            
+            if (sessionHistory.length === 0) {
+                container.innerHTML = '<p class="no-data">No session data yet. Upload audio to analyze.</p>';
+                return;
+            }
+            
+            let html = '';
+            sessionHistory.forEach((entry, index) => {
+                const displayName = EMOTION_DISPLAY_NAMES[entry.emotion] || 
+                                   entry.emotion.charAt(0).toUpperCase() + entry.emotion.slice(1);
+                
+                html += `
+                    <div class="mood-entry" style="margin-bottom: 15px; border-left-color: ${emotionColors[entry.emotion]}">
+                        <div class="entry-header">
+                            <div class="entry-emotion">
+                                ${displayName}
+                            </div>
+                            <div class="entry-time">${entry.timestamp}</div>
+                        </div>
+                        <div><strong>Confidence:</strong> ${(entry.confidence * 100).toFixed(1)}%</div>
+                        <div><strong>File:</strong> ${entry.filename}</div>
+                        ${entry.recommendations && entry.recommendations.length > 0 ? 
+                            `<div style="margin-top: 5px;"><strong>Recommendation:</strong> ${entry.recommendations[0]}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Save session data to localStorage
+        function saveSessionData() {
+            try {
+                localStorage.setItem('serMindSessionHistory', JSON.stringify(sessionHistory));
+                localStorage.setItem('serMindMoodEntries', JSON.stringify(moodEntries));
+            } catch (error) {
+                console.error('Error saving session data:', error);
+            }
+        }
+
+        // Load session data from localStorage
+        function loadSessionData() {
+            try {
+                const savedHistory = localStorage.getItem('serMindSessionHistory');
+                const savedMoods = localStorage.getItem('serMindMoodEntries');
+                
+                if (savedHistory) {
+                    sessionHistory = JSON.parse(savedHistory);
+                    updateSessionHistoryDisplay();
+                }
+                
+                if (savedMoods) {
+                    moodEntries = JSON.parse(savedMoods);
+                    updateMoodEntriesDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading session data:', error);
+            }
+        }
+
+        // Export session data
+        function exportSessionData() {
+            if (sessionHistory.length === 0) {
+                alert('No session data to export.');
+                return;
+            }
+            
+            const data = {
+                sessionHistory: sessionHistory,
+                moodEntries: moodEntries,
+                emotionLabels: EMOTION_LABELS,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `ser-mind-data-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Clear history
+        function clearHistory() {
+            if (sessionHistory.length === 0) {
+                alert('No history to clear.');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear all session history?')) {
+                sessionHistory = [];
+                updateSessionHistoryDisplay();
+                saveSessionData();
+                
+                // Reset pie chart
+                window.pieChart.data.datasets[0].data = [0.2, 0.2, 0.2, 0.2, 0.2];
+                window.pieChart.update();
+                updatePieLegend();
+                
+                alert('Session history cleared.');
+            }
+        }
+
+        // Show detailed analysis
+        async function showDetailedAnalysis() {
+            try {
+                // Try to get detailed analysis from backend
+                const response = await axios.get(`${BACKEND_URL}/emotions`);
+                const emotionsInfo = response.data.emotions.map(e => 
+                    `${e.display_name}: ${e.color} (ID: ${e.id})`
+                ).join('\n');
+                
+                alert(`Available emotions for analysis:\n\n${emotionsInfo}`);
+            } catch (error) {
+                // Mock detailed analysis
+                alert(`Detailed Analysis:\n\nCurrent Emotion: ${EMOTION_DISPLAY_NAMES[currentEmotion] || currentEmotion}\nConfidence: ${(currentConfidence * 100).toFixed(1)}%\n\nRecent emotions detected in session.`);
+            }
+        }
+
+        // Get recommendations
+        async function getRecommendations() {
+            if (!currentEmotion) {
+                alert('Please analyze an audio file first to get recommendations.');
+                return;
+            }
+            
+            try {
+                // Try to get recommendations from backend
+                const fileInput = document.getElementById('audioUpload');
+                if (fileInput.files && fileInput.files[0]) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    
+                    const response = await axios.post(`${BACKEND_URL}/predict_with_fallback`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    
+                    if (response.data && response.data.suggestions) {
+                        alert(`Recommendations for you:\n\n• ${response.data.suggestions.join('\n• ')}`);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+            }
+            
+            // Mock recommendations based on current emotion
+            const recommendations = {
+                'neutral': [
+                    'Practice mindfulness to enhance your current state',
+                    'Set a small goal for today',
+                    'Try a new hobby or activity',
+                    'Take a mindful walk in nature'
+                ],
+                'happy': [
+                    'Share your positive energy with others',
+                    'Practice gratitude by listing things you appreciate',
+                    'Engage in creative expression (art, music, writing)',
+                    'Do something kind for someone else'
+                ],
+                'sad': [
+                    'Practice self-compassion and allow yourself to feel',
+                    'Talk to a trusted friend or family member',
+                    'Write down your feelings in a journal',
+                    'Listen to calming or uplifting music'
+                ],
+                'angry': [
+                    'Channel your energy constructively',
+                    'Practice the 4-7-8 breathing technique',
+                    'Go for a brisk walk or run',
+                    'Try progressive muscle relaxation'
+                ],
+                'fearful': [
+                    'Practice grounding techniques to reduce anxiety',
+                    'Use the 5-4-3-2-1 grounding exercise',
+                    'Practice box breathing (inhale 4, hold 4, exhale 4, hold 4)',
+                    'Challenge anxious thoughts with factual evidence'
+                ]
+            };
+            
+            const currentRecs = recommendations[currentEmotion] || recommendations.neutral;
+            const displayName = EMOTION_DISPLAY_NAMES[currentEmotion] || currentEmotion;
+            alert(`Recommendations for ${displayName} mood:\n\n• ${currentRecs.join('\n• ')}`);
+        }
+
+        // Mood journal functions
+        function saveMoodEntry() {
+            const selectedMood = document.querySelector('.mood-option.selected');
+            if (!selectedMood) {
+                alert('Please select a mood first.');
+                return;
+            }
+            
+            const mood = selectedMood.dataset.mood;
+            const notes = document.getElementById('moodNotes').value;
+            const timestamp = new Date().toLocaleString();
+            
+            const entry = {
+                mood: mood,
+                notes: notes || 'No additional notes',
+                timestamp: timestamp,
+                detectedEmotion: currentEmotion || 'neutral'
+            };
+            
+            moodEntries.unshift(entry);
+            
+            // Keep only last 10 entries
+            if (moodEntries.length > 10) {
+                moodEntries = moodEntries.slice(0, 10);
+            }
+            
+            updateMoodEntriesDisplay();
+            saveSessionData();
+            
+            // Clear form
+            document.querySelector('.mood-option.selected').classList.remove('selected');
+            document.getElementById('moodNotes').value = '';
+            
+            // Update mental health metrics
+            updateMentalHealthMetrics();
+            
+            alert('Mood entry saved successfully!');
+        }
+
+        function updateMoodEntriesDisplay() {
+            const container = document.getElementById('moodEntries');
+            
+            if (moodEntries.length === 0) {
+                container.innerHTML = '<p>No mood entries yet. Add your first entry!</p>';
+                return;
+            }
+            
+            let html = '';
+            moodEntries.forEach(entry => {
+                const moodIcons = {
+                    'excited': 'fa-grin-stars',
+                    'happy': 'fa-smile',
+                    'neutral': 'fa-meh',
+                    'sad': 'fa-frown',
+                    'anxious': 'fa-flushed',
+                    'angry': 'fa-angry'
+                };
+                
+                html += `
+                    <div class="mood-entry">
+                        <div class="entry-header">
+                            <div class="entry-emotion">
+                                <i class="fas ${moodIcons[entry.mood] || 'fa-meh'}"></i>
+                                ${entry.mood.toUpperCase()}
+                            </div>
+                            <div class="entry-time">${entry.timestamp}</div>
+                        </div>
+                        <div>${entry.notes}</div>
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                            Detected emotion: ${EMOTION_DISPLAY_NAMES[entry.detectedEmotion] || entry.detectedEmotion}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function addSampleMoodEntries() {
+            if (moodEntries.length === 0) {
+                moodEntries = [
+                    {
+                        mood: 'happy',
+                        notes: 'Feeling great today!',
+                        timestamp: new Date(Date.now() - 86400000).toLocaleString(),
+                        detectedEmotion: 'happy'
+                    },
+                    {
+                        mood: 'neutral',
+                        notes: 'Average day, nothing special',
+                        timestamp: new Date(Date.now() - 172800000).toLocaleString(),
+                        detectedEmotion: 'neutral'
+                    },
+                    {
+                        mood: 'sad',
+                        notes: 'Feeling a bit down',
+                        timestamp: new Date(Date.now() - 259200000).toLocaleString(),
+                        detectedEmotion: 'sad'
+                    }
+                ];
+                updateMoodEntriesDisplay();
+            }
+        }
+
+        // Wellness activities
+        function addSampleWellnessActivities() {
+            const activities = [
+                { icon: 'fa-walking', text: 'Take a 10-minute walk' },
+                { icon: 'fa-apple-alt', text: 'Eat a healthy snack' },
+                { icon: 'fa-book', text: 'Read for 15 minutes' },
+                { icon: 'fa-music', text: 'Listen to calming music' },
+                { icon: 'fa-pencil-alt', text: 'Journal your thoughts' }
+            ];
+            
+            const container = document.getElementById('wellnessActivities');
+            let html = '';
+            
+            activities.forEach(activity => {
+                html += `
+                    <div class="activity-card">
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas ${activity.icon} activity-icon"></i>
+                            <div>
+                                <h4>Suggested Activity</h4>
+                                <p>${activity.text}</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" style="padding: 8px 16px;">
+                            <i class="fas fa-check"></i> Done
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Add event listeners to done buttons
+            document.querySelectorAll('.activity-card .btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const activityCard = this.closest('.activity-card');
+                    activityCard.style.opacity = '0.7';
+                    activityCard.querySelector('button').innerHTML = '<i class="fas fa-check"></i> Completed';
+                    activityCard.querySelector('button').disabled = true;
+                    
+                    // Update wellness score
+                    updateWellnessScore(5);
+                });
+            });
+        }
+
+        function generateNewSuggestion() {
+            const suggestions = [
+                'Drink a glass of water',
+                'Do 5 minutes of stretching',
+                'Call a friend or family member',
+                'Write down 3 things you\'re grateful for',
+                'Take 3 deep breaths',
+                'Stand up and move around for 2 minutes',
+                'Look away from screens for 5 minutes'
+            ];
+            
+            const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            
+            // Add to activities
+            const container = document.getElementById('wellnessActivities');
+            const newActivity = `
+                <div class="activity-card">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-lightbulb activity-icon"></i>
+                        <div>
+                            <h4>New Suggestion</h4>
+                            <p>${randomSuggestion}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" style="padding: 8px 16px;">
+                        <i class="fas fa-check"></i> Done
+                    </button>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', newActivity);
+            
+            // Add event listener to the new button
+            const newButton = container.querySelector('.activity-card:first-child .btn');
+            newButton.addEventListener('click', function() {
+                const activityCard = this.closest('.activity-card');
+                activityCard.style.opacity = '0.7';
+                activityCard.querySelector('button').innerHTML = '<i class="fas fa-check"></i> Completed';
+                activityCard.querySelector('button').disabled = true;
+                
+                // Update wellness score
+                updateWellnessScore(5);
+            });
+        }
+
+        // Update mental health metrics
+        function updateMentalHealthMetrics() {
+            // This would normally be calculated based on mood entries and emotion analysis
+            // For demo, we'll use some random variations
+            
+            const stressValue = Math.max(10, Math.min(90, 30 + Math.random() * 20));
+            const stabilityValue = Math.max(20, Math.min(95, 70 + Math.random() * 15));
+            const anxietyValue = Math.max(5, Math.min(80, 25 + Math.random() * 15));
+            const wellnessValue = Math.max(50, Math.min(100, 80 + Math.random() * 10));
+            
+            document.getElementById('stressLevel').textContent = stressValue < 40 ? 'Low' : stressValue < 70 ? 'Medium' : 'High';
+            document.getElementById('stressLevel').className = `metric-value ${stressValue < 40 ? 'stress' : stressValue < 70 ? 'warning' : 'danger'}`;
+            
+            document.getElementById('moodStability').textContent = stabilityValue > 70 ? 'Stable' : stabilityValue > 40 ? 'Moderate' : 'Unstable';
+            
+            document.getElementById('anxietyIndicator').textContent = anxietyValue < 30 ? 'Low' : anxietyValue < 60 ? 'Moderate' : 'High';
+            document.getElementById('anxietyIndicator').className = `metric-value ${anxietyValue < 30 ? 'anxiety' : anxietyValue < 60 ? 'warning' : 'danger'}`;
+            
+            document.getElementById('wellnessScore').textContent = `${Math.round(wellnessValue)}%`;
+            
+            // Update bars
+            document.querySelectorAll('.metric-bar .bar-fill').forEach((bar, index) => {
+                const values = [stressValue, stabilityValue, anxietyValue, wellnessValue];
+                bar.style.width = `${values[index]}%`;
+            });
+            
+            // Update insights based on metrics
+            let insights = '';
+            if (wellnessValue > 80) {
+                insights = 'Excellent emotional wellbeing maintained.';
+            } else if (wellnessValue > 60) {
+                insights = 'Good emotional balance with room for improvement.';
+            } else {
+                insights = 'Consider practicing more self-care activities.';
+            }
+            
+            document.getElementById('healthInsights').textContent = insights;
+            
+            // Update recommendations
+            const recommendations = [
+                'Stay hydrated and eat balanced meals',
+                'Get 7-8 hours of sleep nightly',
+                'Practice mindfulness for 10 minutes daily',
+                'Connect with loved ones regularly',
+                'Take regular breaks during work'
+            ];
+            
+            const randomRec = recommendations[Math.floor(Math.random() * recommendations.length)];
+            document.getElementById('wellnessRecommendations').textContent = randomRec;
+        }
+
+        function updateTrends() {
+            // Update trend chart with new data
+            const currentData = window.trendChart.data;
+            const weeks = currentData.labels;
+            const wellbeingData = currentData.datasets[0].data;
+            const stressData = currentData.datasets[1].data;
+            
+            // Add new week
+            const newWeekNum = weeks.length + 1;
+            weeks.push(`Week ${newWeekNum}`);
+            
+            // Add new data points with some variation
+            const lastWellbeing = wellbeingData[wellbeingData.length - 1];
+            const lastStress = stressData[stressData.length - 1];
+            
+            const newWellbeing = Math.max(50, Math.min(100, lastWellbeing + (Math.random() * 10 - 5)));
+            const newStress = Math.max(10, Math.min(90, lastStress + (Math.random() * 10 - 5)));
+            
+            wellbeingData.push(newWellbeing);
+            stressData.push(newStress);
+            
+            // Keep only last 8 data points
+            if (weeks.length > 8) {
+                weeks.shift();
+                wellbeingData.shift();
+                stressData.shift();
+            }
+            
+            window.trendChart.update();
+            
+            // Update metrics
+            updateMentalHealthMetrics();
+            
+            alert('Trends updated with latest data!');
+        }
+
+        function updateWellnessScore(points) {
+            const scoreElement = document.getElementById('wellnessScore');
+            let currentScore = parseInt(scoreElement.textContent);
+            currentScore = Math.min(100, currentScore + points);
+            scoreElement.textContent = `${currentScore}%`;
+            
+            // Update the bar
+            const wellnessBar = document.querySelectorAll('.metric-bar .bar-fill')[3];
+            wellnessBar.style.width = `${currentScore}%`;
+        }
+    </script>
+</body>
+</html>
